@@ -1,1 +1,1 @@
-#These are infantry programs of group C
+#uart programs of group C

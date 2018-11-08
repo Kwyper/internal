@@ -66,20 +66,40 @@ void drive_meccanum(const int16_t vx, const int16_t vy, const int16_t vw)
  motor_speed_sp[3] = (-vx - vy + vw * rotate_ratio_f) * v2rpm_ratio;
 }
 
+// void chassis_task(pid_s_t wheel_pid[])
+// {
+//   get_chassis_speed();
+//   drive_meccanum(chassis_speed.vx, chassis_speed.vy, chassis_speed.vw);
+//
+//   for(int i=0;i<4;i++)
+//   {
+//     motor_output[i] = pid_calcu(&wheel_pid[i],motor_speed_sp[i],_encoder[i].speed_rpm);
+//   }
+//
+//   can_motorSetCurrent(
+//     0x200,
+//     motor_output[0],
+//     motor_output[1],
+//     motor_output[2],
+//     motor_output[3]);
+// }
+
 void chassis_task(pid_s_t wheel_pid[])
 {
+
+  int16_t pid_output =0;
   get_chassis_speed();
   drive_meccanum(chassis_speed.vx, chassis_speed.vy, chassis_speed.vw);
 
-  for(int i=0;i<4;i++)
-  {
-    motor_output[i] = pid_calcu(&wheel_pid[i],motor_speed_sp[i],_encoder[i].speed_rpm);
-  }
+
+  //pid_output = pid_calcu(&wheel_pid[0],0,_encoder[0].radian_angle);
+  pid_output = pid_calcu(&wheel_pid[1],0.0f,(float)_encoder[0].total_ecd);
+  //pid_output = pid_calcu(&wheel_pid[1],(float)pid_output,(float)_encoder[0].speed_rpm);
 
   can_motorSetCurrent(
     0x200,
-    motor_output[0],
-    motor_output[1],
-    motor_output[2],
-    motor_output[3]);
+    pid_output,
+    0,
+    0,
+    0);
 }

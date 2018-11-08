@@ -39,6 +39,7 @@ int16_t motor_output[4];        //Torque command for motors
 
 pid_s_t wheel_pid[4];
 
+pid_s_t terret_pid[2];
 
 static THD_WORKING_AREA(motor_ctrl_thread_wa,512);
 static THD_FUNCTION(motor_ctrl_thread, p)
@@ -52,6 +53,9 @@ static THD_FUNCTION(motor_ctrl_thread, p)
       pid_init(&wheel_pid[i],7.5f,0.03f,0.0f,1000.0f,12000.0f);
     }
 
+    pid_init(&terret_pid[0],17.5f,0.0f,0.0f,1000.0f,12000.0f);
+    pid_init(&terret_pid[1],7.5f,0.0f,0.0f,1000.0f,2000.0f);
+
 	while(true)
 	{
         /*
@@ -63,7 +67,7 @@ static THD_FUNCTION(motor_ctrl_thread, p)
         */
 
 
-    chassis_task(wheel_pid);
+    chassis_task(terret_pid);
 
 		chThdSleepMilliseconds(2);
 	}
@@ -87,6 +91,7 @@ int main(void)
 
     RC_init();
     can_processInit();
+
 
     //rc = RC_get();
 
