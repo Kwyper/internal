@@ -6,10 +6,7 @@
 //#include "chassis_task.h"
 //#include "configure.h"
 //pid_s_t pid;
-
 //static int16_t motor_final_output;
-pid_s_t pid;
-
 /*const float kp_angle = 25.0f;     //Proportional for angle
 const float ki_angle = 0.01f;     //Integration for angle
 const float kd_angle = 10.0f;     //Derivative for angle
@@ -25,7 +22,6 @@ volatile float preError_angle = 0;
 
 volatile float errorSum_speed = 0;
 volatile float preError_speed = 0;*/
-
 /*volatile float angle;
 
 static float angle_pid_control(const float setPoint,
@@ -65,7 +61,6 @@ static float angle_pid_control(const float setPoint,
     return output;
     //return a float so that it can be received by speed_pid_control()
 }*/
-
 /*static int16_t speed_pid_control(const float setPoint_fromAngle,
                                  const float currentPoint_fromMotor)
 {
@@ -95,7 +90,6 @@ static float angle_pid_control(const float setPoint,
     // all the ranges above are to be changed
     return output;
 }*/
-
 /*
 static float absValue(float a){
   if (a<0.0f){
@@ -104,8 +98,6 @@ static float absValue(float a){
   return a;
 }
 */
-
-
 /*static int basicTest(float setPoint_forMotor, float currentPoint_fromMotor){
   if((setPoint_forMotor - currentPoint_fromMotor) < 30.0f &&
       (setPoint_forMotor - currentPoint_fromMotor) > -30.0f){
@@ -114,7 +106,6 @@ static float absValue(float a){
     return 500;
   }
 }*/
-
 /**
  * a simple function to link two PID controller
  *
@@ -136,7 +127,6 @@ static float absValue(float a){
                                currentSpeed_fromMotor);
     return output;
 }*/
-
 /*static float currentAngleCalcu(float radian_angle){
     while((radian_angle - 27*8192) > 0){
       radian_angle -= 27*8192;
@@ -144,7 +134,7 @@ static float absValue(float a){
     radian_angle *= 7.669904e-4f;
     return radian_angle;
 }*/
-
+pid_s_t pid;
 static THD_WORKING_AREA(motor_ctrl_thread_wa,512);
 static THD_FUNCTION(motor_ctrl_thread, p)
 {
@@ -173,7 +163,7 @@ static THD_FUNCTION(motor_ctrl_thread, p)
 
 	  can_motorSetCurrent(0x200, motor_final_output,0,0,0);*/
 
-	  drive_turrent(&pid,encoder,4000);
+	  turrent_task(&pid,encoder,4000);
 
 	  chThdSleepMilliseconds(10);
 	}

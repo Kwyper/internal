@@ -29,11 +29,12 @@ typedef struct{
 
 }pid_s_t;
 
+//bool shouldHit = false;
+
 void pid_init(pid_s_t *pid,float kp,float ki,float kd,uint32_t max_integral,uint32_t max_pid_out);
 
 float pid_cal(pid_s_t *pid,const float set,const float get);
 
-void drive_turrent(pid_s_t* pid, Encoder_canStruct* encoder, int16_t setPoint);
-
+void turrent_task(pid_s_t* pid, Encoder_canStruct* encoder, int16_t setPoint);
 
 #endif /* SRC_TURRENT_H_ */
