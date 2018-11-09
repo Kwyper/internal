@@ -36,7 +36,7 @@ void turrent_calibrate(void)
     }
     if(!palReadPad(GPIOA,GPIOA_BUTTON)&&button_state==DOWN)
     {
-       if(chVTGetSystemTime() - gap_time > TIME_MS2I(900)) button_state = HOLD;
+       if(chVTGetSystemTime() - gap_time > TIME_MS2I(1000)) button_state = HOLD;
        else if(chVTGetSystemTime() - gap_time > TIME_MS2I(100)) button_state = PRESSED;
        else button_state = UP;
     }

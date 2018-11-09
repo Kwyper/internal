@@ -5,6 +5,7 @@
 #include "oled.h"
 
 void turrent_task(pid_s_t turrent_pid[]);
+void turrent_calibrate(void);
 
 typedef enum{
   UP = 0,
