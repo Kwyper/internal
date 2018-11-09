@@ -45,9 +45,9 @@ float pid_calc(pid_s_t* pid, const int16_t set,const int16_t get)
   return pid->pid_out;
 }
 
-/*
-int16_t setPoint_calc(int fromCV){
-    switch fromCV{
+
+int16_t setPoint_calc(uint8_t fromCV){
+    switch (fromCV){
     case 1:
       return -1365;
       break;
@@ -58,16 +58,19 @@ int16_t setPoint_calc(int fromCV){
       return 1365;
       break;
     default:
+      return 0;
       break;
     }
-
 }
-*/
 
-void turrent_task(pid_s_t* pid, Encoder_canStruct* encoder, int16_t setPoint)
+
+
+void turrent_task(pid_s_t* pid, Encoder_canStruct* encoder, uint8_t terret_state)
 {
+    int16_t setPoint = setPoint_calc(terret_state);
     float finalOutput = pid_calc(pid, setPoint, encoder->angle_rotor_raw);
     can_motorSetCurrent(0x200,finalOutput,0,0,0);
+
 }
 
 
