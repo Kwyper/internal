@@ -79,6 +79,11 @@
 #define GPIOC_OSC_IN          14U
 #define GPIOC_OSC_OUT         15U
 
+#define GPIOB_OLED_SCL			12U
+#define GPIOB_OLED_SDA			13U
+#define GPIOC_OLED_RST			15U
+#define GPIOC_OLED_DC          	14U
+
 
 
 #define LINE_LED PAL_LINE(GPIOA, GPIOA_LED)

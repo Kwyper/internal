@@ -26,7 +26,7 @@ void pid_init(pid_s_t *pid,float kp,float ki,float kd,uint32_t max_integral,uint
 
 }
 
-float pid_calcu(pid_s_t *pid,float set,float get)
+float pid_calcu(pid_s_t *pid,const float set,const float get)
 {
   float err = set - get;
 
@@ -90,12 +90,7 @@ void chassis_task(pid_s_t wheel_pid[])
   int16_t pid_output =0;
   get_chassis_speed();
   drive_meccanum(chassis_speed.vx, chassis_speed.vy, chassis_speed.vw);
-
-
-  //pid_output = pid_calcu(&wheel_pid[0],0,_encoder[0].radian_angle);
   pid_output = pid_calcu(&wheel_pid[1],0.0f,(float)_encoder[0].total_ecd);
-  //pid_output = pid_calcu(&wheel_pid[1],(float)pid_output,(float)_encoder[0].speed_rpm);
-
   can_motorSetCurrent(
     0x200,
     pid_output,

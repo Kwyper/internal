@@ -30,47 +30,41 @@
 #include "chassis_task.h"
 #include "configure.h"
 
-#include "chassis_task.h"
 
+#include "uart_for_cv.h"
+#include "turrent.h"
 #include <stdlib.h>
-
-
-int16_t motor_output[4];        //Torque command for motors
-
-pid_s_t wheel_pid[4];
+#include "oled.h"
 
 pid_s_t terret_pid[2];
 
-static THD_WORKING_AREA(motor_ctrl_thread_wa,512);
-static THD_FUNCTION(motor_ctrl_thread, p)
+static THD_WORKING_AREA(turrent_ctrl_thread_wa,512);
+static THD_FUNCTION(turrent_ctrl_thread, p)
 {
     (void) p;
-  //	int16_t strafe = 0, drive = 0, rotation = 0;   //move direction for chassis
-  //  Encoder_canStruct* encoder = can_getEncoder(); //Pointer to motor encoder feedbakc
-  //  static float motor_error_int[4]; //error integrators for the four motors
-    for(int i=0;i<4;i++)
-    {
-      pid_init(&wheel_pid[i],7.5f,0.03f,0.0f,1000.0f,12000.0f);
-    }
 
-    pid_init(&terret_pid[0],17.5f,0.0f,0.0f,1000.0f,12000.0f);
-    pid_init(&terret_pid[1],7.5f,0.0f,0.0f,1000.0f,2000.0f);
+    pid_init(&terret_pid[0],0.5f,0.0f,5.0f,1000.0f,2000.0f);
+    pid_init(&terret_pid[1],0.3f,0.0f,4.0f,1000.0f,8000.0f);
+    turrent_calibrate();
 
 	while(true)
 	{
-        /*
-            //NOTE: A special question for you: how we decide this value
-            //"12000/1320"
-    		strafe = (rc->?? - 1024)*12000.0f/1320.0f;
-            drive = (rc->?? - 1024)*12000.0f/1320.0f;
-            rotation = (rc->?? - 1024)*12000.0f/1320.0f;
-        */
-
-
-    chassis_task(terret_pid);
-
-		chThdSleepMilliseconds(2);
+    turrent_task(terret_pid);
+		chThdSleepMilliseconds(5);
 	}
+}
+
+static THD_WORKING_AREA(serial_ctrl_thread_wa,512);
+static THD_FUNCTION(serial_ctrl_thread, p)
+{
+    (void) p;
+
+    while(true)
+  	{
+      //read_serial();
+
+  		chThdSleepMilliseconds(5);
+  	}
 }
 
 /*
@@ -79,31 +73,30 @@ static THD_FUNCTION(motor_ctrl_thread, p)
 int main(void)
 {
 
-    /*
-    * System initializations.
-    * - HAL initialization, this also initializes the configured device drivers
-    *   and performs the board-specific initializations.
-    * - Kernel initialization, the main() function becomes a thread and the
-    *   RTOS is active.
-    */
+
     halInit();
     chSysInit();
 
     RC_init();
     can_processInit();
+    OLED_Init();
+    OLED_Clear();
+    rx_serial_init();
 
 
-    //rc = RC_get();
 
-    chThdCreateStatic(motor_ctrl_thread_wa, sizeof(motor_ctrl_thread_wa),
-		  	  	  	 NORMALPRIO, motor_ctrl_thread, NULL);
 
-    /*
-    * Normal main() thread activity
-    */
+    chThdCreateStatic(turrent_ctrl_thread_wa, sizeof(turrent_ctrl_thread_wa),
+		  	  	  	 NORMALPRIO, turrent_ctrl_thread, NULL);
+
+    chThdCreateStatic(serial_ctrl_thread_wa, sizeof(serial_ctrl_thread_wa),
+             		 NORMALPRIO, serial_ctrl_thread, NULL);
+
+
+
     while (true)
     {
         palTogglePad(GPIOA, GPIOA_LED);
-        chThdSleepMilliseconds(500);
+        chThdSleepMilliseconds(50);
     }
 }
