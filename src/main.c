@@ -61,9 +61,33 @@ static THD_FUNCTION(motor_ctrl_thread, p)
             drive = (rc->?? - 1024)*12000.0f/1320.0f;
             rotation = (rc->?? - 1024)*12000.0f/1320.0f;
         */
+		if (RC_Ctl.s2 == 1){
+        		palSetPad(GPIOA, 14);
+       		 }
+    		else if (RC_Ctl.s2 == 3){
+      			palClearPad(GPIOA, 14);
+      			palClearPad(GPIOA, 13);
+      		 }
+		else if (RC_Ctl.s2 == 2){
+			palSetPad(GPIOA, 13);
+		}
+
+		if(RC_Ctl.s1 == 1){
+			palSetPad(GPIOA, 12);
+		}
+		else if(RC_Ctl.s1 == 3){
+			palClearPad(GPIOA, 12);
+		}
+
+		if(RC_Ctl.channel1 > 0){
+			can_motorSetCurrent(0x1FF, 100, 0, 0, 0);
+		}
+		else if(RC_Ctl.channel1 < 0){
+			can_motorSetCurrent(0x1FF, -100, 0, 0, 0);
+		}
 
 
-    chassis_task(wheel_pid);
+   		chassis_task(wheel_pid);
 
 		chThdSleepMilliseconds(2);
 	}
