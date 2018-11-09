@@ -1,7 +1,7 @@
-#include "ch.h"
+/*#include "ch.h"
 #include "hal.h"
 #include "canBusProcess.h"
-#include "dbus.h"
+#include "dbus.h"*/
 
 #include "gripper.h"
 
@@ -38,44 +38,6 @@ float pid_calc(pid_s_t* pid, const int16_t set,const int16_t get)
 
   return pid->pid_out;
 }
-
-/*static float angle_pid_control(const float setPoint,
-                               const float currentPoint)
-{
-    float output;
-    float error = setPoint - currentPoint;
-    errorSum_angle += error;
-    float errorDiff = error - preError_angle;
-    preError_angle = error;
-
-    if(errorSum_angle > 50.0f){
-          errorSum_angle = 50.0f;
-    }else if(errorSum_angle < -50.0f){
-          errorSum_angle = -50.0f;
-    }
-    //limit Sum
-    //to be changed: the range
-
-    int16_t pidp = error*kp_angle;
-    int16_t pidi = ki_angle*errorSum_angle*0.73f;
-    int16_t pidd = kd_angle*errorDiff;
-
-    output = pidp + pidi + pidd;
-
-    if (error <= 5.0f && error >= -5.0f){
-      output = 0;
-    }
-    //to be changed: the range
-
-    if(output > 1000)
-        output = 1000;
-    else if(output < -1000)
-        output = -1000;
-    //to be changed: the range
-
-    return output;
-    //return a float so that it can be received by speed_pid_control()
-}*/
 
 static int16_t speed_pid_control(const float setPoint_fromAngle,
                                  const float currentPoint_fromMotor)
@@ -150,7 +112,12 @@ static THD_FUNCTION(motor_ctrl_thread, p)
 
 void gripper_init()
 {
+  pid_init(&pid_struct_speed, 0.01f, 0.00012f, 0.7f,10,1000000, 1000000);
+  pid_init(&pid_struct_position, 25.0f, 0.01f, 10.0f,10,1000000, 1000000);
+  RC_init();
+  rc = RC_get();
+  can_processInit();
+  encoder = can_getEncoder();
   chThdCreateStatic(motor_ctrl_thread_wa, sizeof(motor_ctrl_thread_wa),
-                  NORMALPRIO + 6 ,
-                  motor_ctrl_thread, NULL);
+                    NORMALPRIO, motor_ctrl_thread, NULL);
 }

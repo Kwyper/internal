@@ -66,5 +66,4 @@ void turret_task(pid_s_t* pid, Encoder_canStruct* encoder, uint8_t turret_state)
     int16_t setPoint = setPoint_calc(turret_state);
     float finalOutput = pid_calc(pid, setPoint, encoder->angle_rotor_raw);
     can_motorSetCurrent(0x200,finalOutput,0,0,0);
-
 }
