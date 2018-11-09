@@ -38,7 +38,7 @@ static void decryptDBUS(void)
 
 
 	/* 防止遥控器零点有偏差 */
-  if(RC_Ctl.channel0 <= 5 && RC_Ctl.channel0 >= -5)
+  if(RC_Ctl.channel0 <= 15 && RC_Ctl.channel0 >= -15)
     RC_Ctl.channel0 = 0;
   if(RC_Ctl.channel1 <= 5 && RC_Ctl.channel1 >= -5)
     RC_Ctl.channel1 = 0;

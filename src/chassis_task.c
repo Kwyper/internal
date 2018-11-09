@@ -60,10 +60,10 @@ void get_chassis_speed(void)
 void drive_meccanum(const int16_t vx, const int16_t vy, const int16_t vw)
 {
  static float v2rpm_ratio = 19.0f * 60.0f/479.0f;               //unit mm    RPM    m = minute
- motor_speed_sp[0] = (+vx - vy + vw * rotate_ratio_f) * v2rpm_ratio;
- motor_speed_sp[1] = (+vx + vy + vw * rotate_ratio_f) * v2rpm_ratio;
- motor_speed_sp[2] = (-vx + vy + vw * rotate_ratio_f) * v2rpm_ratio;
- motor_speed_sp[3] = (-vx - vy + vw * rotate_ratio_f) * v2rpm_ratio;
+ motor_speed_sp[0] = (+vx + vy + vw * rotate_ratio_f) * v2rpm_ratio;
+ motor_speed_sp[1] = (+vx - vy + vw * rotate_ratio_f) * v2rpm_ratio;
+ motor_speed_sp[2] = (-vx - vy + vw * rotate_ratio_f) * v2rpm_ratio;
+ motor_speed_sp[3] = (-vx + vy + vw * rotate_ratio_f) * v2rpm_ratio;
 }
 
 void chassis_task(pid_s_t wheel_pid[])

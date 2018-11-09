@@ -31,71 +31,68 @@
 #include "configure.h"
 
 #include "chassis_task.h"
+#include "gripper_task.h"
 
 #include <stdlib.h>
 
 
-int16_t motor_output[4];        //Torque command for motors
+int16_t motor_output[4] = {0};        //Torque command for motors
 
 pid_s_t wheel_pid[4];
-
+pid_s_t gripper_pid;
 
 static THD_WORKING_AREA(motor_ctrl_thread_wa,512);
 static THD_FUNCTION(motor_ctrl_thread, p)
 {
     (void) p;
-  //	int16_t strafe = 0, drive = 0, rotation = 0;   //move direction for chassis
-  //  Encoder_canStruct* encoder = can_getEncoder(); //Pointer to motor encoder feedbakc
-  //  static float motor_error_int[4]; //error integrators for the four motors
+
     for(int i=0;i<4;i++)
     {
-      pid_init(&wheel_pid[i],7.5f,0.03f,0.0f,1000.0f,12000.0f);
+      pid_init(&wheel_pid[i],5.0f,0.03f,5.0f,1000.0f,12000.0f);
     }
 
 	while(true)
 	{
-        /*
-            //NOTE: A special question for you: how we decide this value
-            //"12000/1320"
-    		strafe = (rc->?? - 1024)*12000.0f/1320.0f;
-            drive = (rc->?? - 1024)*12000.0f/1320.0f;
-            rotation = (rc->?? - 1024)*12000.0f/1320.0f;
-        */
-
 
     chassis_task(wheel_pid);
 
-		chThdSleepMilliseconds(2);
+		chThdSleepMilliseconds(4);
 	}
 }
 
-/*
- * Application entry point.
- */
+static THD_WORKING_AREA(gripper_ctrl_thread_wa,512);
+static THD_FUNCTION(gripper_ctrl_thread, p)
+{
+    (void) p;
+  pid_init(&gripper_pid,0.3f,0.0f,4.0f,1000.0f,2000.0f);
+
+	while(true)
+	{
+    gripper_task(&gripper_pid);
+		chThdSleepMilliseconds(4);
+	}
+}
+
+
 int main(void)
 {
 
-    /*
-    * System initializations.
-    * - HAL initialization, this also initializes the configured device drivers
-    *   and performs the board-specific initializations.
-    * - Kernel initialization, the main() function becomes a thread and the
-    *   RTOS is active.
-    */
+
     halInit();
     chSysInit();
 
     RC_init();
     can_processInit();
 
-    //rc = RC_get();
+
+
+    chThdCreateStatic(gripper_ctrl_thread_wa, sizeof(gripper_ctrl_thread_wa),
+		  	  	  	 NORMALPRIO, gripper_ctrl_thread, NULL);
 
     chThdCreateStatic(motor_ctrl_thread_wa, sizeof(motor_ctrl_thread_wa),
-		  	  	  	 NORMALPRIO, motor_ctrl_thread, NULL);
+             		 NORMALPRIO, motor_ctrl_thread, NULL);
 
-    /*
-    * Normal main() thread activity
-    */
+
     while (true)
     {
         palTogglePad(GPIOA, GPIOA_LED);

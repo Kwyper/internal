@@ -10,6 +10,7 @@
 #include "canBusProcess.h"
 
 volatile Encoder_canStruct _encoder[CHASSIS_MOTOR_NUM];
+volatile Encoder_canStruct _gripper;
 
 /*
  * 1M baud, automatic wakeup, automatic recover
@@ -73,6 +74,10 @@ static void can_processEncoderMessage(const CANRxFrame* const rxmsg)
         case CHASSIS_MOTOR_BL_EID:
             can_processEncoder(&_encoder[BL_WHEEL], rxmsg);
             break;
+
+       case CHASSIS_GRIPPER_EID:
+            can_processEncoder(&_gripper, rxmsg);
+                break;
 
 
 

@@ -13,8 +13,11 @@
 #define CHASSIS_MOTOR_FR_EID          0x202
 #define CHASSIS_MOTOR_BR_EID          0x203
 #define CHASSIS_MOTOR_BL_EID          0x204
+#define CHASSIS_GRIPPER_EID          0x205
 
 #define CAN_ENCODER_RANGE              8192            // 0x2000
+
+
 
 typedef enum {
     FL_WHEEL = 0,
@@ -37,6 +40,7 @@ typedef struct {
 } Encoder_canStruct;
 
 volatile Encoder_canStruct* can_getEncoder(void);
+extern volatile Encoder_canStruct _gripper;
 
 void can_processInit(void);
 void can_motorSetCurrent(const uint16_t EID,
