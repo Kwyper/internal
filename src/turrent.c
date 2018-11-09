@@ -45,6 +45,7 @@ float pid_calc(pid_s_t* pid, const int16_t set,const int16_t get)
   return pid->pid_out;
 }
 
+/*
 int16_t setPoint_calc(int fromCV){
     switch fromCV{
     case 1:
@@ -61,6 +62,7 @@ int16_t setPoint_calc(int fromCV){
     }
 
 }
+*/
 
 void turrent_task(pid_s_t* pid, Encoder_canStruct* encoder, int16_t setPoint)
 {
