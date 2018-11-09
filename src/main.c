@@ -2,16 +2,19 @@
 #include "hal.h"
 #include "canBusProcess.h"
 #include "dbus.h"
+//#include "chassis_task.h"
+//#include "configure.h"
+//pid_s_t pid;
 
 static int16_t motor_final_output;
 
-const float kp_angle = 10.0f;     //Proportional for angle
-const float ki_angle = 10.0f;     //Integration for angle
+const float kp_angle = 25.0f;     //Proportional for angle
+const float ki_angle = 0.01f;     //Integration for angle
 const float kd_angle = 10.0f;     //Derivative for angle
 
-const float kp_speed = 7.5f;
-const float ki_speed = 0.03f;
-const float kd_speed = 0.0f;
+const float kp_speed = 0.01f;
+const float ki_speed = 0.00012f;
+const float kd_speed = 0.7f;
 
 //all to be modified
 
@@ -32,16 +35,16 @@ static float angle_pid_control(const float setPoint,
     float errorDiff = error - preError_angle;
     preError_angle = error;
 
-    if(errorSum_angle > 30.0f){
-          errorSum_angle = 30.0f;
-    }else if(errorSum_angle < -30.0f){
-          errorSum_angle = -30.0f;
+    if(errorSum_angle > 50.0f){
+          errorSum_angle = 50.0f;
+    }else if(errorSum_angle < -50.0f){
+          errorSum_angle = -50.0f;
     }
     //limit Sum
     //to be changed: the range
 
     int16_t pidp = error*kp_angle;
-    int16_t pidi = ki_angle*errorSum_angle;
+    int16_t pidi = ki_angle*errorSum_angle*0.73f;
     int16_t pidd = kd_angle*errorDiff;
 
     output = pidp + pidi + pidd;
@@ -71,22 +74,22 @@ static int16_t speed_pid_control(const float setPoint_fromAngle,
     preError_speed = error;
 
     if(errorSum_speed > 10.0f){
-          errorSum_speed = 10;
+          errorSum_speed = 10.0f;
     }else if(errorSum_speed < -10.0f){
-          errorSum_speed = -10;
+          errorSum_speed = -10.0f;
     }
 
-    int16_t pidp = error*kp_speed;
-    int16_t pidi = ki_speed*errorSum_speed;
+    int16_t pidp = kp_speed*error;
+    int16_t pidi = ki_speed*errorSum_speed*0.73f;
     int16_t pidd = kd_speed*errorDiff;
 
     output = (int)(pidp + pidi + pidd);
     //speed_pid_control should out put a current value to be passed to motor_set_current()
 
-    if(output > 750)
-        output = 750;
-    else if(output < -750)
-        output = -750;
+    if(output > 1000)
+        output = 1000;
+    else if(output < -1000)
+        output = -1000;
     // all the ranges above are to be changed
     return output;
 }
@@ -125,6 +128,7 @@ static int16_t pid_control_all(const float setPoint_forAngle,
     int16_t output;
     int16_t setPoint_fromAngle = angle_pid_control(setPoint_forAngle,
                                                    currentPoint_fromMotor);
+    setPoint_fromAngle *= (6000.0 / 6.28318f);
     //setPoint_fromAngle: a speed setPoint to be passed to speed_pid_control()
 
     output = speed_pid_control(setPoint_fromAngle,
@@ -144,15 +148,11 @@ static THD_WORKING_AREA(motor_ctrl_thread_wa,512);
 static THD_FUNCTION(motor_ctrl_thread, p)
 {
     (void) p;
-    volatile Encoder_canStruct* encoder = can_getEncoder();
     //volatile RC_Ctl_t* rc = RC_get();
-
+    //pid_init(&pid,7.5f,0.03f,0.0f,1000.0f,12000.0f);
 	while(true)
 	{
-	  //todo(DONE): the first parameter of PIDcontrol can be changed by the switch of RC
-
-	  //float setPoint = 0.0f;
-	  /*
+	  /*float setPoint = 0.0f;
 	  switch(rc->s1){
 	  case RC_S_UP:
 	    setPoint = 1.0f;
@@ -167,8 +167,10 @@ static THD_FUNCTION(motor_ctrl_thread, p)
 	    break;
 	  }
   */
+	  volatile Encoder_canStruct* encoder = can_getEncoder();
 	  angle = currentAngleCalcu(encoder->angle_rotor_raw);
-	  motor_final_output = angle_pid_control(50.0f,angle);
+	  //motor_final_output = pid_calcu(&pid,50.0f,angle);
+	  motor_final_output = pid_control_all(50.0f,angle,encoder->speed_rpm);
 
 	  can_motorSetCurrent(0x200, motor_final_output,0,0,0);
 
