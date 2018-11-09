@@ -21,7 +21,6 @@ void pid_init(pid_s_t *pid,float kp,float ki,float kd,uint32_t max_integral,uint
 
   pid->max_integral = max_integral;
   pid->max_pid_out = max_pid_out;
-
 }
 
 float pid_calc(pid_s_t* pid, const int16_t set,const int16_t get)
@@ -45,7 +44,6 @@ float pid_calc(pid_s_t* pid, const int16_t set,const int16_t get)
   return pid->pid_out;
 }
 
-
 int16_t setPoint_calc(uint8_t fromCV){
     switch (fromCV){
     case 1:
@@ -62,8 +60,6 @@ int16_t setPoint_calc(uint8_t fromCV){
       break;
     }
 }
-
-
 
 void turret_task(pid_s_t* pid, Encoder_canStruct* encoder, uint8_t turret_state)
 {
