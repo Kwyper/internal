@@ -31,6 +31,13 @@ volatile Encoder_canStruct* can_getEncoder(void)   //浠�涔堝啓娉曪紵锛
   return _encoder;
 }
 
+/*static float currentAngleCalcuForProcess(float radian_angle){
+    while((radian_angle - 27*8192) > 0){
+      radian_angle -= 27*8192;
+    }
+    radian_angle *= 7.669904e-4f;
+    return radian_angle;
+}*/
 
 #define CAN_ENCODER_RADIAN_RATIO    7.669904e-4f    // 2*M_PI / 0x2000   8192  14bits
 static void can_processEncoder

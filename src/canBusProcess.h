@@ -1,10 +1,10 @@
 #ifndef _CAN_BUS_PROCESS_H_
 #define _CAN_BUS_PROCESS_H_
 
-#include "stdint.h"
-#include "stdbool.h"
+//#include "stdint.h"
+//#include "stdbool.h"
 #include "hal.h"
-#include "string.h"
+//#include "string.h"
 
 #define CHASSIS_MOTOR_NUM                4U
 

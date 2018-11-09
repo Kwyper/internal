@@ -2,13 +2,15 @@
 #include "hal.h"
 #include "canBusProcess.h"
 #include "dbus.h"
+#include "turrent.h"
 //#include "chassis_task.h"
 //#include "configure.h"
 //pid_s_t pid;
 
-static int16_t motor_final_output;
+//static int16_t motor_final_output;
+pid_s_t pid;
 
-const float kp_angle = 25.0f;     //Proportional for angle
+/*const float kp_angle = 25.0f;     //Proportional for angle
 const float ki_angle = 0.01f;     //Integration for angle
 const float kd_angle = 10.0f;     //Derivative for angle
 
@@ -22,9 +24,9 @@ volatile float errorSum_angle = 0;
 volatile float preError_angle = 0;
 
 volatile float errorSum_speed = 0;
-volatile float preError_speed = 0;
+volatile float preError_speed = 0;*/
 
-volatile float angle;
+/*volatile float angle;
 
 static float angle_pid_control(const float setPoint,
                                const float currentPoint)
@@ -62,9 +64,9 @@ static float angle_pid_control(const float setPoint,
 
     return output;
     //return a float so that it can be received by speed_pid_control()
-}
+}*/
 
-static int16_t speed_pid_control(const float setPoint_fromAngle,
+/*static int16_t speed_pid_control(const float setPoint_fromAngle,
                                  const float currentPoint_fromMotor)
 {
     int16_t output;
@@ -92,7 +94,7 @@ static int16_t speed_pid_control(const float setPoint_fromAngle,
         output = -1000;
     // all the ranges above are to be changed
     return output;
-}
+}*/
 
 /*
 static float absValue(float a){
@@ -104,15 +106,14 @@ static float absValue(float a){
 */
 
 
-static int basicTest(float setPoint_forMotor, float currentPoint_fromMotor){
+/*static int basicTest(float setPoint_forMotor, float currentPoint_fromMotor){
   if((setPoint_forMotor - currentPoint_fromMotor) < 30.0f &&
       (setPoint_forMotor - currentPoint_fromMotor) > -30.0f){
     return 0;
   }else{
     return 500;
   }
-}
-
+}*/
 
 /**
  * a simple function to link two PID controller
@@ -121,7 +122,7 @@ static int basicTest(float setPoint_forMotor, float currentPoint_fromMotor){
  * currentPoint_fromMotor: from Motor feedback
  * currentSpeed_fromMotor: from Motor feedback
  */
-static int16_t pid_control_all(const float setPoint_forAngle,
+/*static int16_t pid_control_all(const float setPoint_forAngle,
                                const float currentPoint_fromMotor,
                                const float currentSpeed_fromMotor)
 {
@@ -134,22 +135,21 @@ static int16_t pid_control_all(const float setPoint_forAngle,
     output = speed_pid_control(setPoint_fromAngle,
                                currentSpeed_fromMotor);
     return output;
-}
+}*/
 
-static float currentAngleCalcu(float radian_angle){
+/*static float currentAngleCalcu(float radian_angle){
     while((radian_angle - 27*8192) > 0){
       radian_angle -= 27*8192;
     }
     radian_angle *= 7.669904e-4f;
     return radian_angle;
-}
+}*/
 
 static THD_WORKING_AREA(motor_ctrl_thread_wa,512);
 static THD_FUNCTION(motor_ctrl_thread, p)
 {
     (void) p;
-    //volatile RC_Ctl_t* rc = RC_get();
-    //pid_init(&pid,7.5f,0.03f,0.0f,1000.0f,12000.0f);
+    pid_init(&pid,7.5f,0.03f,0.0f,1000.0f,12000.0f);
 	while(true)
 	{
 	  /*float setPoint = 0.0f;
@@ -167,12 +167,13 @@ static THD_FUNCTION(motor_ctrl_thread, p)
 	    break;
 	  }
   */
-	  volatile Encoder_canStruct* encoder = can_getEncoder();
-	  angle = currentAngleCalcu(encoder->angle_rotor_raw);
-	  //motor_final_output = pid_calcu(&pid,50.0f,angle);
-	  motor_final_output = pid_control_all(50.0f,angle,encoder->speed_rpm);
+	  Encoder_canStruct* encoder = can_getEncoder();
 
-	  can_motorSetCurrent(0x200, motor_final_output,0,0,0);
+	  /*motor_final_output = pid_calc(&pid,1234,encoder->angle_rotor_raw);
+
+	  can_motorSetCurrent(0x200, motor_final_output,0,0,0);*/
+
+	  drive_turrent(&pid,encoder,4000);
 
 	  chThdSleepMilliseconds(10);
 	}
