@@ -79,10 +79,10 @@ static THD_FUNCTION(motor_ctrl_thread, p)
 			palClearPad(GPIOA, 12);
 		}
 
-		if(RC_Ctl.channel1 > 0){
+		if(RC_Ctl.channel4 > 0){
 			can_motorSetCurrent(0x1FF, 100, 0, 0, 0);
 		}
-		else if(RC_Ctl.channel1 < 0){
+		else if(RC_Ctl.channel4 < 0){
 			can_motorSetCurrent(0x1FF, -100, 0, 0, 0);
 		}
 
