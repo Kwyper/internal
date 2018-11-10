@@ -4,11 +4,11 @@ float gripper_encoder_state = 0.0;
 void gripper_task(pid_s_t* gripper_pid)
 {
 
-   const int16_t max_interval = 30000;
-   const int16_t min_interval = -1000;
+   const int32_t max_interval = 10000;
+   const int32_t min_interval = -60000;
    gripper_pneu();
    RC_Ctl_t* rc = RC_get();
-   gripper_encoder_state += rc->channel3*0.1;
+   gripper_encoder_state -= rc->channel3*0.3;
    if(gripper_encoder_state > max_interval)  gripper_encoder_state = max_interval;
    if(gripper_encoder_state < min_interval)  gripper_encoder_state = min_interval;
 

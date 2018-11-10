@@ -64,7 +64,7 @@ static THD_WORKING_AREA(gripper_ctrl_thread_wa,512);
 static THD_FUNCTION(gripper_ctrl_thread, p)
 {
     (void) p;
-  pid_init(&gripper_pid,0.3f,0.0f,4.0f,1000.0f,2000.0f);
+  pid_init(&gripper_pid,3.0f,0.0f,2.0f,1000.0f,7000.0f);
 
 	while(true)
 	{
