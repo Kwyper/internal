@@ -4,7 +4,7 @@ float gripper_encoder_state = 0.0;
 void gripper_task(pid_s_t* gripper_pid)
 {
 
-   const int32_t max_interval = 10000;
+   const int32_t max_interval = 20000;
    const int32_t min_interval = -60000;
    gripper_pneu();
    RC_Ctl_t* rc = RC_get();
@@ -14,17 +14,17 @@ void gripper_task(pid_s_t* gripper_pid)
 
    int16_t gripper_out = pid_calcu(gripper_pid,gripper_encoder_state,_gripper.total_ecd);
 
-   if(_gripper.total_ecd > max_interval||max_interval < min_interval)
-   {
-     can_motorSetCurrent(
-       0x1FF,
-       0,
-       0,
-       0,
-       0);
-
-   }
-   else{
+   // if(_gripper.total_ecd > max_interval||max_interval < min_interval)
+   // {
+   //   can_motorSetCurrent(
+   //     0x1FF,
+   //     0,
+   //     0,
+   //     0,
+   //     0);
+   //
+   // }
+   // else{
      can_motorSetCurrent(
        0x1FF,
        gripper_out,
@@ -32,7 +32,7 @@ void gripper_task(pid_s_t* gripper_pid)
        0,
        0);
 
-   }
+   //}
 
 }
 
