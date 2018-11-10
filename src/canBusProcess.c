@@ -38,7 +38,6 @@ volatile Encoder_canStruct* can_getEncoder(void)   //浠�涔堝啓娉曪紵锛
     radian_angle *= 7.669904e-4f;
     return radian_angle;
 }*/
-
 #define CAN_ENCODER_RADIAN_RATIO    7.669904e-4f    // 2*M_PI / 0x2000   8192  14bits
 static void can_processEncoder
   (volatile Encoder_canStruct* cm, const CANRxFrame* const rxmsg)

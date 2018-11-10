@@ -160,6 +160,11 @@ following refer to stm32f1 reference manual section 9.1
 #define VAL_GPIOECRH            0x88888888      /* PE15...PE8 */
 #define VAL_GPIOEODR            0xFFFFFFFF
 
+#define GPIOB_OLED_SCL          12U
+#define GPIOB_OLED_SDA          13U
+#define GPIOC_OLED_RST          15U
+#define GPIOC_OLED_DC           14U
+
 // /*
 //  * USB bus activation macro, required by the USB driver.
 //  */
