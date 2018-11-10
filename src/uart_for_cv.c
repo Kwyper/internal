@@ -4,6 +4,7 @@
 #include "oled.h"
 
 uint8_t serial_rx_buffer[10] = {0};
+uint8_t target = 1;
 
 
 void rx_serial_init(void)
@@ -22,13 +23,14 @@ void rx_serial_init(void)
 void read_serial(void)
 {
 
-  sdRead(&SD1, serial_rx_buffer, 3);
+  sdRead(&SD1, serial_rx_buffer, 1);
   //sdWrite(&SD1, serial_rx_buffer, 3);
+  target = serial_rx_buffer[0];
   OLED_ShowChar(0,0,serial_rx_buffer[0]);
 
-  OLED_ShowChar(0,2,serial_rx_buffer[1]);
+  //OLED_ShowChar(0,2,serial_rx_buffer[1]);
 
-  OLED_ShowChar(0,4,serial_rx_buffer[2]);
+  //OLED_ShowChar(0,4,serial_rx_buffer[2]);
 
 
 }

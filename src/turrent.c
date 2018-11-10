@@ -4,13 +4,15 @@
 
 #include "turrent.h"
 #include "chassis_task.h"
+#include "uart_for_cv.h"
 
-int32_t record_pos[3] = {0};
+float record_pos[3] = {0.0};
 
 void turrent_task(pid_s_t turrent_pid[])
 {
-
-  int16_t turrent_output = pid_calcu(&turrent_pid[1],0.0f,_encoder[0].total_ecd);
+  if(target==1||target==2||target==3){
+  int16_t turrent_output = pid_calcu(&turrent_pid[1],record_pos[target-1],_encoder[0].total_ecd);
+}
 
 
   can_motorSetCurrent(
@@ -29,24 +31,38 @@ void turrent_calibrate(void)
   {
 
     OLED_ShowNum(0,2*cursor,_encoder[0].total_ecd,6,16);
-    if(palReadPad(GPIOA,GPIOA_BUTTON)&&button_state==UP)
+
+
+    if(!palReadPad(GPIOA,GPIOA_BUTTON)&&button_state==UP)
     {
        button_state = DOWN;
        gap_time = chVTGetSystemTime();
     }
-    if(!palReadPad(GPIOA,GPIOA_BUTTON)&&button_state==DOWN)
+
+    if(palReadPad(GPIOA,GPIOA_BUTTON)&&button_state==DOWN)
     {
-       if(chVTGetSystemTime() - gap_time > TIME_MS2I(1000)) button_state = HOLD;
+       if(chVTGetSystemTime() - gap_time > TIME_MS2I(900)) button_state = HOLD;
        else if(chVTGetSystemTime() - gap_time > TIME_MS2I(100)) button_state = PRESSED;
        else button_state = UP;
     }
 
-    if(button_state==HOLD)  break;
+
+    if(button_state==HOLD)
+     {
+       button_state = UP;
+       //break;
+     }
 
     if(button_state==PRESSED)
     {
       record_pos[cursor++] = _encoder[0].total_ecd;
-      cursor = cursor%3;
+      if(cursor>=3)
+       {
+         OLED_Clear();
+         OLED_ShowString(0,2, "finish");
+         break;
+       }
+      //cursor = cursor%3;
       button_state = UP;
     }
 

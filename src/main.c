@@ -61,7 +61,7 @@ static THD_FUNCTION(serial_ctrl_thread, p)
 
     while(true)
   	{
-      //read_serial();
+      read_serial();
 
   		chThdSleepMilliseconds(5);
   	}
