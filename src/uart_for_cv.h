@@ -4,7 +4,10 @@
 void rx_serial_init(void);
 void read_serial(void);
 
-exrern uint8_t target;
+#include "ch.h"
+#include "hal.h"
+
+extern uint8_t target;
 
 
 #endif /* end of include guard: UART_FOR_CV */

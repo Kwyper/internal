@@ -37,6 +37,7 @@
 #include "oled.h"
 
 pid_s_t terret_pid[2];
+int random_number = 0;
 
 static THD_WORKING_AREA(turrent_ctrl_thread_wa,512);
 static THD_FUNCTION(turrent_ctrl_thread, p)
@@ -82,7 +83,7 @@ int main(void)
     OLED_Init();
     OLED_Clear();
     rx_serial_init();
-
+    palClearPad(GPIOB,8);
 
 
 
@@ -96,7 +97,9 @@ int main(void)
 
     while (true)
     {
+        random_number++;
+        random_number = random_number%3;
         palTogglePad(GPIOA, GPIOA_LED);
-        chThdSleepMilliseconds(50);
+        chThdSleepMilliseconds(5000);
     }
 }

@@ -15,6 +15,6 @@ typedef enum{
 
 }button_state_t;
 
-extern int32_t record_pos[3];
+extern float record_pos[3];
 
 #endif /* end of include guard: TURRENT_H */
