@@ -9,8 +9,8 @@ void gripper_task(pid_s_t* gripper_pid)
    gripper_pneu();
    RC_Ctl_t* rc = RC_get();
    gripper_encoder_state -= rc->channel3*0.3;
-   if(gripper_encoder_state > max_interval)  gripper_encoder_state = max_interval;
-   if(gripper_encoder_state < min_interval)  gripper_encoder_state = min_interval;
+   // if(gripper_encoder_state > max_interval)  gripper_encoder_state = max_interval;
+   // if(gripper_encoder_state < min_interval)  gripper_encoder_state = min_interval;
 
    int16_t gripper_out = pid_calcu(gripper_pid,gripper_encoder_state,_gripper.total_ecd);
 
