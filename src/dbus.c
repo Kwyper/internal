@@ -93,10 +93,10 @@ RC_Ctl_t* RC_get(void)
 
 static void RC_reset(void)
 {
-    RC_Ctl.channel0 = 1024;
-    RC_Ctl.channel1 = 1024;
-    RC_Ctl.channel2 = 1024;
-    RC_Ctl.channel3 = 1024;
+    RC_Ctl.channel0 = 0;
+    RC_Ctl.channel1 = 0;
+    RC_Ctl.channel2 = 0;
+    RC_Ctl.channel3 = 0;
 
     RC_Ctl.s1 =0;
     RC_Ctl.s2 = 0;

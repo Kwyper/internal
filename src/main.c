@@ -83,6 +83,7 @@ int main(void)
 
     RC_init();
     can_processInit();
+    gripper_init();
 
 
 

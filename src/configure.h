@@ -7,7 +7,7 @@
 
 #define RC_MAX_RANGE 660
 
-#define MAX_CHASSIS_VX_SPEED 3300     //mm per second
+#define MAX_CHASSIS_VX_SPEED 3000     //mm per second
 #define MAX_CHASSIS_VY_SPEED 3300
 #define MAX_CHASSIS_VW_SPEED 330
 

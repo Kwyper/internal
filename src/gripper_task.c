@@ -36,21 +36,28 @@ void gripper_task(pid_s_t* gripper_pid)
 
 }
 
+void gripper_init(void)
+{
+  palClearPad(GPIOB,7);
+  palClearPad(GPIOB,8);
+  palClearPad(GPIOB,9);
+}
+
 void gripper_pneu(void)
 {
   RC_Ctl_t* rc = RC_get();
   switch (rc->s1) {
     case RC_S_UP:
-    palSetPad(GPIOB,4);
+    palSetPad(GPIOB,7);
 
     break;
     case RC_S_MIDDLE:
-    palClearPad(GPIOB,4);
     palClearPad(GPIOB,7);
+    //palClearPad(GPIOB,7);
 
     break;
     case RC_S_DOWN:
-    palSetPad(GPIOB,7);
+    //palSetPad(GPIOB,7);
 
     break;
     default:
@@ -61,7 +68,7 @@ void gripper_pneu(void)
   switch (rc->s2) {
     case RC_S_UP:
     palSetPad(GPIOB,8);
-    palSetPad(GPIOB,9);
+
 
     break;
     case RC_S_MIDDLE:
@@ -70,6 +77,7 @@ void gripper_pneu(void)
 
     break;
     case RC_S_DOWN:
+    palSetPad(GPIOB,9);
     //palSetPad(GPIOB,7);
 
     break;
