@@ -113,6 +113,7 @@ int main(void)
     can_processInit();
 
     //rc = RC_get();
+    chassis_task();
 
     chThdCreateStatic(motor_ctrl_thread_wa, sizeof(motor_ctrl_thread_wa),
 		  	  	  	 NORMALPRIO, motor_ctrl_thread, NULL);
